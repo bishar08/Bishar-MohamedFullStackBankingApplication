@@ -11,7 +11,7 @@ function Deposit() {
         show ? (
           <DepositForm setShow={setShow} setStatus={setStatus} />
         ) : (
-          <DepositMsg setShow={setShow} />
+          <DepositMsg setShow={setShow} setStatus={setStatus} />
         )
       }
     />
@@ -48,7 +48,7 @@ function DepositForm(props) {
       try {
         const data = JSON.parse(text)
         setBalance(data.balance)
-        console.log('JSON: ', data)
+        console.log('JSON:', data)
       } catch (err) {
         props.setStatus(text)
         console.log('err:', text)
@@ -56,15 +56,16 @@ function DepositForm(props) {
     })
 
   function handle() {
-    fetch(`/account/findOne/${email}`)
+    fetch(`/account/update/${email}/${amount}`)
       .then((response) => response.text())
       .then((text) => {
         try {
           const data = JSON.parse(text)
-          setBalance(data.balance)
-          console.log('JSON: ', data)
+          //props.setStatus(JSON.stringify(data.value));
+          props.setShow(false)
+          console.log('JSON:', data)
         } catch (err) {
-          props.setStatus(text)
+          props.setStatus('Deposit failed')
           console.log('err:', text)
         }
       })
