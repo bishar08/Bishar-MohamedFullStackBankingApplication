@@ -1,24 +1,24 @@
-function Deposit() {
+function Transactions() {
   const [show, setShow] = React.useState(true)
   const [status, setStatus] = React.useState('')
 
   return (
     <Card
       bgcolor="warning"
-      header="Deposit"
+      header="Send Money"
       status={status}
       body={
         show ? (
-          <DepositForm setShow={setShow} setStatus={setStatus} />
+          <TransactionsForm setShow={setShow} setStatus={setStatus} />
         ) : (
-          <DepositMsg setShow={setShow} />
+          <TransactionsMsg setShow={setShow} setStatus={setStatus} />
         )
       }
     />
   )
 }
 
-function DepositMsg(props) {
+function TransactionsMsg(props) {
   return (
     <>
       <h5>Success</h5>
@@ -36,11 +36,12 @@ function DepositMsg(props) {
   )
 }
 
-function DepositForm(props) {
+function TransactionsForm(props) {
   const ctx = React.useContext(UserContext)
   const email = ctx.user.email
   const [balance, setBalance] = React.useState(0)
   const [amount, setAmount] = React.useState('')
+  const [reciever, setReciever] = React.useState('')
 
   fetch(`/account/findOne/${email}`)
     .then((response) => response.text())
@@ -48,23 +49,37 @@ function DepositForm(props) {
       try {
         const data = JSON.parse(text)
         setBalance(data.balance)
-        console.log('JSON: ', data)
+        console.log('JSON:', data)
       } catch (err) {
         props.setStatus(text)
         console.log('err:', text)
       }
     })
 
-  function handle() {
-    fetch(`/account/findOne/${email}`)
+  function sendmoney() {
+    fetch(`/account/update/${email}/-${amount}`)
       .then((response) => response.text())
       .then((text) => {
         try {
           const data = JSON.parse(text)
-          setBalance(data.balance)
-          console.log('JSON: ', data)
+          //props.setStatus(JSON.stringify(data.value));
+          props.setShow(false)
+          console.log('JSON:', data)
         } catch (err) {
-          props.setStatus(text)
+          props.setStatus('Deposit failed')
+          console.log('err:', text)
+        }
+      })
+    fetch(`/account/update/${reciever}/${amount}`)
+      .then((response) => response.text())
+      .then((text) => {
+        try {
+          const data = JSON.parse(text)
+          //props.setStatus(JSON.stringify(data.value));
+          props.setShow(false)
+          console.log('JSON:', data)
+        } catch (err) {
+          props.setStatus('Deposit failed')
           console.log('err:', text)
         }
       })
@@ -73,7 +88,18 @@ function DepositForm(props) {
   return (
     <>
       <h6>Your account balance is ${Number(balance).toFixed(2)}</h6>
-      Amount
+      Send money to another account
+      <br />
+      Send money to email: <br />
+      <input
+        type="input"
+        className="form-control"
+        placeholder="Enter email"
+        value={reciever}
+        onChange={(e) => setReciever(e.currentTarget.value)}
+      />
+      <br />
+      Amount:
       <br />
       <input
         type="number"
@@ -83,7 +109,7 @@ function DepositForm(props) {
         onChange={(e) => setAmount(e.currentTarget.value)}
       />
       <br />
-      <button type="submit" className="btn btn-light" onClick={handle}>
+      <button type="submit" className="btn btn-light" onClick={sendmoney}>
         Deposit
       </button>
     </>

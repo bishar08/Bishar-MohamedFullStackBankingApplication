@@ -7,7 +7,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
   console.log('Connected!')
 
   // connect to myproject database
-  db = client.db('myproject')
+  db = client.db('badbank')
 })
 
 // create user account
@@ -21,16 +21,56 @@ function create(name, email, password) {
   })
 }
 
-// all user
-function all() {
+//find user account
+function find(emil) {
   return new Promise((resolve, reject) => {
     const customers = db
       .collection('users')
-      .find()
+      .find({ email: email })
       .toArray(function (err, docs) {
         err ? reject(err) : resolve(docs)
       })
   })
 }
 
-module.exports = { create, all }
+// find one user account
+function findOne(email) {
+  return new Promise((resolve, reject) => {
+    const customers = db
+      .collection('users')
+      .findOne({ email: email })
+      .toArray(function (err, doc) {
+        err ? reject(err) : resolve(doc)
+      })
+  })
+}
+
+// update - deposit/withdraw amount
+function update(email, amount) {
+  return new Promise((resolve, reject) => {
+    const customers = db
+      .collection('users')
+      .findOneAndUpdate(
+        { email: email },
+        { $inc: { balance: amount } },
+        { returnOriginal: false },
+        function (err, doc) {
+          err ? reject(err) : resolve(doc)
+        }
+      )
+  })
+}
+
+// all user
+function all() {
+  return new Promise((resolve, reject) => {
+    const customers = db
+      .collection('users')
+      .find({})
+      .toArray(function (err, docs) {
+        err ? reject(err) : resolve(docs)
+      })
+  })
+}
+
+module.exports = { create, find, findOne, update, all }
