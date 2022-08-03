@@ -1,13 +1,15 @@
 const MongoClient = require('mongodb').MongoClient
+//const ObjectId = require('mongoose').Types.ObjectId
 const url = 'mongodb://localhost:27017'
-let db = null
+var db = null
 
+//'mongodb://localhost:27017'
 //connect to Mongo
 MongoClient.connect(url, { useUnifiedTopology: true }, function (err, client) {
   console.log('Connected!')
 
   // connect to myproject database
-  db = client.db('badbank')
+  db = client.db('my_project')
 })
 
 // create user account
@@ -16,13 +18,15 @@ function create(name, email, password) {
     const collection = db.collection('users')
     const doc = { name, email, password, balance: 0 }
     collection.insertOne(doc, { w: 1 }, function (err, result) {
+      console.log('dal.js create user: ', doc)
+      console.log('dal.js create result: ', result)
       err ? reject(err) : resolve(doc)
     })
   })
 }
 
-//find user account
-function find(emil) {
+//find user accounta
+function find(email) {
   return new Promise((resolve, reject) => {
     const customers = db
       .collection('users')
@@ -33,15 +37,14 @@ function find(emil) {
   })
 }
 
-// find one user account
+// find user account
 function findOne(email) {
   return new Promise((resolve, reject) => {
     const customers = db
       .collection('users')
       .findOne({ email: email })
-      .toArray(function (err, doc) {
-        err ? reject(err) : resolve(doc)
-      })
+      .then((doc) => resolve(doc))
+      .catch((err) => reject(err))
   })
 }
 
@@ -54,8 +57,8 @@ function update(email, amount) {
         { email: email },
         { $inc: { balance: amount } },
         { returnOriginal: false },
-        function (err, doc) {
-          err ? reject(err) : resolve(doc)
+        function (err, documents) {
+          err ? reject(err) : resolve(documents)
         }
       )
   })

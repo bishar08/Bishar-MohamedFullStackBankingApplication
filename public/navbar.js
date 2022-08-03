@@ -5,7 +5,7 @@ function NavBar() {
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
           <div
             className="container-fluid"
-            style={{ backgroundColor: '#fce2fe', padding: '10px 20px' }}
+            style={{ backgroundColor: '#00FFFF', padding: '10px 20px' }}
             body={{ color: '#ec4ef8' }}
           >
             <button
@@ -104,16 +104,6 @@ function NavBar() {
                     href="#/alldata/"
                   >
                     AllData
-                  </a>
-                </li>
-                <li className="nav-item d-none" id="transactionslink">
-                  <a
-                    className="nav-link"
-                    data-toggle="tooltip"
-                    title="send money to another account"
-                    href="#/transactions/"
-                  >
-                    Send Money
                   </a>
                 </li>
                 <li className="nav-item d-none" id="logoutlink">

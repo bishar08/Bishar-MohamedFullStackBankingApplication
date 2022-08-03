@@ -16,7 +16,7 @@ function BalanceForm(props) {
         const data = JSON.parse(text)
         setBalance(data.balance)
       } catch (err) {
-        console.log('err:', text)
+        //console.log('err:', text)
       }
     })
 

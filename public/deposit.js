@@ -41,8 +41,9 @@ function DepositForm(props) {
   const email = ctx.user.email
   const [balance, setBalance] = React.useState(0)
   const [amount, setAmount] = React.useState('')
+  const url = `/account/findOne/${email}`
 
-  fetch(`/account/findOne/${email}`)
+  fetch(url)
     .then((response) => response.text())
     .then((text) => {
       try {
@@ -51,7 +52,7 @@ function DepositForm(props) {
         console.log('JSON:', data)
       } catch (err) {
         props.setStatus(text)
-        console.log('err:', text)
+        //console.log('err:', text)
       }
     })
 
